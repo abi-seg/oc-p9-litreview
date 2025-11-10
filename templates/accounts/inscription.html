@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Formulaire d'inscription{% endblock %}
+{% block header_title %}Formulaire d'inscription{% endblock %}
+
+{% block content %}
+
+<style>
+    .form-container {
+        max-width: 450px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        margin-bottom: 18px;
+        border: 1px solid #333;
+        border-radius: 4px;
+    }
+
+    label {
+        display: block;
+        font-weight: normal;
+        margin-bottom: 6px;
+    }
+
+    .btn-row {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .btn-outline-box {
+    background-color: #8d74a5; /* violet same as header */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: normal;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-outline-box:hover {
+    background-color: #7c53a2;
+    color: white;
+    font-weight: normal;
+}
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Inscrivez-vous</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+        {{ form.username }}
+
+        <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+        {{ form.password1 }}
+
+        <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+        {{ form.password2 }}
+
+        <div class="btn-row">
+            <a href="{% url 'connexion' %}" class="btn-outline-box">Retourner</a>
+            <button type="submit" class="btn-outline-box">S'inscrire</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

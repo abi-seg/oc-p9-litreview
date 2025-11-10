@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}LitReview{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family:cursive, sans-serif;
+        }
+        /* Header color */
+        .custom-nav {
+            background-color: #8d74a5;    /* brownish color */
+            color: #dcdcdc;
+            padding: 0.75rem 1rem;
+        }
+        .form-control {
+            border-radius: 4px;
+        }
+        .btn-brown {
+            background-color: #8d74a5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-brown:hover {
+            background-color:#7c53a2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+   <!-- Top Navbar -->
+<div class="custom-nav d-flex align-items-center justify-content-between px-4">
+    <span style="white-space: nowrap;"><strong>{% block header_title %}Page d'accueil{% endblock %}</strong></span>
+    <span class="text-center w-100"><strong>LITReview</strong></span>
+    <span style="width: 100px;">&nbsp;</span> <!-- spacing placeholder on right -->
+</div>
+
+    <div class="container mt-5">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>
