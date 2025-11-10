@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Créer un ticket{% endblock %}
+{% block header_title %}Créer un ticket{% endblock %}
+{% block content %}
+<style>
+    .ticket-heading {
+        color: #8c74a5; /* violet */
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    .btn-unstyled {
+        border: 1px solid black;
+        background: transparent;
+        padding: 8px 20px;
+        border-radius: 4px;
+        font-weight: bold;
+        color: black;
+        cursor: pointer;
+    }
+
+    .btn-unstyled:hover {
+        background-color: #eee;
+    }
+</style>
+<div class="container mt-5 p-4 border shadow-sm">
+    <h2 class="text-center mb-4">Créer un ticket</h2>
+      <style>
+        .text-purple {
+            color: #8c74a5;
+            font-weight: bold;
+}
+</style>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Titre -->
+        <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">Titre</label>
+            {{ form.title }}
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+            {{ form.description }}
+        </div>
+
+        <!-- Image -->
+        <div class="mb-3">
+            <label for="{{ form.image.id_for_label }}" class="form-label">Image</label>
+            {{ form.image }}
+        </div>
+
+        <!-- Submit -->
+        <div class="text-end">
+            <button type="submit" class="btn btn-outline-dark">Envoyer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

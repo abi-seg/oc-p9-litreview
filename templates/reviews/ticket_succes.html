@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Ticket ajouté{% endblock %}
+{% block content %}
+
+<div class="text-center">
+    <h2>Votre ticket a été créé avec succès ! 🎉</h2>
+    <a href="{% url 'feed' %}" class="btn btn-outline-dark mt-3">Retour au flux</a>
+</div>
+
+{% endblock %}

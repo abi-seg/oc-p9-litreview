@@ -36,9 +36,14 @@
     <!-- Top Navbar -->
    <!-- Top Navbar -->
 <div class="custom-nav d-flex align-items-center justify-content-between px-4">
-    <span style="white-space: nowrap;"><strong>{% block header_title %}Page d'accueil{% endblock %}</strong></span>
+    <span style="white-space: nowrap;"><strong>{% block header_title %}{% endblock %}</strong></span>
     <span class="text-center w-100"><strong>LITReview</strong></span>
-    <span style="width: 100px;">&nbsp;</span> <!-- spacing placeholder on right -->
+    <span class="text-end" style="white-space: nowrap;">
+        <a href="{% url 'feed' %}" class="text-white me-3 text-decoration-none">Flux</a>
+        <a href="#" class="text-white me-3 text-decoration-none">Posts</a>
+        <a href="#" class="text-white me-3 text-decoration-none">Abonnements</a>
+        <a href="{% url 'logout' %}" class="text-white text-decoration-none">Se déconnecter</a>
+    </span> 
 </div>
 
     <div class="container mt-5">
