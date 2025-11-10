@@ -13,15 +13,15 @@
         }
         /* Header color */
         .custom-nav {
-            background-color: #8d74a5;    /* brownish color */
-            color: #dcdcdc;
+            background-color: #7c53a2;    
+            color: white;
             padding: 0.75rem 1rem;
         }
         .form-control {
             border-radius: 4px;
         }
         .btn-brown {
-            background-color: #8d74a5;
+            background-color: #7c53a2;
             color: white;
             border: none;
             border-radius: 5px;
@@ -42,7 +42,12 @@
         <a href="{% url 'feed' %}" class="text-white me-3 text-decoration-none">Flux</a>
         <a href="#" class="text-white me-3 text-decoration-none">Posts</a>
         <a href="#" class="text-white me-3 text-decoration-none">Abonnements</a>
-        <a href="{% url 'logout' %}" class="text-white text-decoration-none">Se déconnecter</a>
+        <form action="{% url 'logout' %}" method="POST" style="display: inline;">
+           {% csrf_token %}
+           <button type="submit" class="nav-link btn btn-link text-white p-0" style="text-decoration: none;">
+        Se déconnecter
+    </button>
+        </form>
     </span> 
 </div>
 

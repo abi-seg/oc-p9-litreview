@@ -20,7 +20,7 @@ def inscription_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('connexion')
+            return redirect('feed')
      else:
         form = InscriptionForm()
      return render(request, 'accounts/inscription.html',{'form':form})

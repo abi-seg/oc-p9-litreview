@@ -2,13 +2,39 @@
 
 {% block content %}
 <div style="text-align:center; margin-top: 50px;">
+    <!-- Buttons -->
     <a href="#" class="btn" style="margin-right: 20px; background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
         Demander une critique
     </a>
-    <a href="#" class="btn" style="background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
+    <a href="{% url 'create_ticket' %}" class="btn" style="background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
         Créer une critique
     </a>
-    
-    
+</div>
+
+<!-- Tickets Section -->
+<div class="container mt-5">
+    {% for ticket in tickets %}
+        <div class="ticket-box border p-3 mb-4">
+            <h4>{{ ticket.title }}</h4>
+            <p>{{ ticket.description }}</p>
+            <p><strong>Créé par:</strong> {{ ticket.user }}</p>
+
+            {% if ticket.user == request.user %}
+                <form action="{% url 'delete_ticket' ticket.id %}" method="POST" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class = "btn btn-outline-danger btn-sm" style="
+        border: 1px solid #7c53a2;
+        background-color: #7c53a2;
+        color:white ;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    ">Supprimer</button>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="text-center mt-3">Aucun ticket disponible.</p>
+    {% endfor %}
 </div>
 {% endblock %}

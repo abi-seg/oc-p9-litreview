@@ -6,5 +6,5 @@ urlpatterns = [
     path('connexion/', views.connexion_view, name='connexion'),
     path('inscription/', views.inscription_view, name='inscription'),
     path('login/',views.connexion_view, name='login'),
-    path('logout/',LogoutView.as_view(), name='logout'),
+    path('logout/',LogoutView.as_view(next_page='connexion'), name='logout'),
 ]
