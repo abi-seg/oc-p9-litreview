@@ -9,12 +9,12 @@ def feed_view(request):
 
 def create_ticket(request):
     if request.method == 'POST':
-        form = TicketForm(request.post,request.files)
+        form = TicketForm(request.POST,request.FILES)
         if form.is_valid():
             ticket=form.save(commit=False)
             ticket.user=request.user #Assign the logged in user
             ticket.save()
-            return redirect('ticket_success')
+            return redirect('ticket_succes')
     else:
         form=TicketForm()
     return render(request, 'reviews/create_ticket.html', {'form':form})
