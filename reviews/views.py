@@ -30,11 +30,15 @@ def edit_ticket(request, ticket_id):
     if request.method == 'POST':
         form=TicketForm(request.POST, request.FILES, instance=ticket)
         if form.is_valid():
-            form.save()
+            updated_ticket =  form.save(commit=False)
+            print("Before Save:",updated_ticket.id, updated_ticket.title)
+            updated_ticket.user=request.user #Reassign ownership here
+            updated_ticket.save()
+            print("After save:",updated_ticket.id)
             return redirect('feed')
     else:
         form = TicketForm(instance=ticket)
-    return render(request, 'reviews/edit_ticket.html',{'form':form})
+    return render(request, 'reviews/edit_ticket.html',{'form':form, 'ticket':ticket})
 @require_POST
 def delete_ticket(request, ticket_id):
     ticket=get_object_or_404(Ticket, id=ticket_id, user=request.user)
