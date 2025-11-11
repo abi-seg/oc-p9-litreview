@@ -31,7 +31,19 @@
         font-weight: bold;
         cursor: pointer;
     ">Supprimer</button>
-            {% endif %}
+                </form>
+            
+        
+  <a href="{% url 'edit_ticket' ticket.id %}" class = "btn btn-outline-danger btn-sm" style="
+        border: 1px solid #7c53a2;
+        background-color: #7c53a2;
+        color:white ;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    ">Modifier</a>
+{% endif %}
         </div>
     {% empty %}
         <p class="text-center mt-3">Aucun ticket disponible.</p>
