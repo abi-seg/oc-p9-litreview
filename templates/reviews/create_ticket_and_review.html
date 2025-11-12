@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Créer une critique (pas en réponse à un ticket){% endblock %}
+{% block header_title %}Créer une critique{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3 class="mb-4">Livre / Article</h3>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Ticket form (Titre, Desc, Image) -->
+        <div class="border p-3 mb-4">
+            <div class="mb-3">
+                <label for="id_title" class="form-label">Titre</label>
+                {{ ticket_form.title }}
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">Description</label>
+                {{ ticket_form.description }}
+            </div>
+            <div class="mb-3">
+                <label for="id_image" class="form-label">Image</label>
+                {{ ticket_form.image }}
+            </div>
+        </div>
+
+        <!-- Review form -->
+        <h3 class="mb-4">Critique</h3>
+        <div class="border p-3 mb-4">
+            <div class="mb-3">
+                <label for="id_headline" class="form-label">Titre</label>
+                {{ review_form.headline }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Note</label><br>
+                <div class="d-flex gap-3 mb-3">
+                    {% for radio in review_form.rating %}
+                        <div class="form-check form-check-inline">
+                             {{ radio.tag }}
+                            <label class="form-check-label">{{ radio.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_body" class="form-label">Commentaire</label>
+                {{ review_form.body }}
+            </div>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-brown">Envoyer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
