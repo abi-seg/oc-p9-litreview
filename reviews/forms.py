@@ -10,3 +10,6 @@ class TicketForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+
+class FollowUserForm(forms.Form):
+    username = forms.CharField(label="Nom d'utilisateur", max_length=150)
