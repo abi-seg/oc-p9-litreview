@@ -1,52 +1,100 @@
 {% extends 'base.html' %}
-
 {% block content %}
+
+<!-- Top Action Buttons -->
 <div style="text-align:center; margin-top: 50px;">
-    <!-- Buttons -->
-    <a href="#" class="btn" style="margin-right: 20px; background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
+    <a href="{% url 'select_ticket_to_review' %}" class="btn" style="margin-right: 20px; background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
         Demander une critique
     </a>
-    <a href="{% url 'create_ticket' %}" class="btn" style="background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
+    <a href="{% url 'create_ticket_and_review' %}" class="btn" style="background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
         Créer une critique
     </a>
 </div>
 
-<!-- Tickets Section -->
+<!-- Reviews Section -->
 <div class="container mt-5">
+    <h3 class="mb-4">Critiques récentes</h3>
+
+    {% for review in reviews %}
+        <div class="border p-3 mb-4">
+            <h5><strong>{{ review.user.username }}</strong> a publié une critique</h5>
+            <p>
+                <strong>{{ review.headline }}</strong> – 
+                {% for i in "12345" %}
+                     {% if forloop.counter <= review.rating %}
+                       <span style="color: orange;"> ★ </span>
+                    {% else %}
+                       <span style="color: lightgray;"> ☆</span>
+                    {% endif %}
+                 {% endfor %}
+            </p>
+            <p>{{ review.body }}</p>
+
+            <div class="mt-2">
+                <small class="text-muted">Concernant le ticket : {{ review.ticket.title }}</small><br>
+                <small>Posté par {{ review.ticket.user.username }}</small>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-center">Aucune critique affichée pour le moment.</p>
+    {% endfor %}
+</div>
+
+<!-- Tickets Section (your own or all, based on your logic) -->
+<div class="container mt-5">
+    <h3 class="mb-4">Tickets</h3>
+
     {% for ticket in tickets %}
         <div class="ticket-box border p-3 mb-4">
             <h4>{{ ticket.title }}</h4>
             <p>{{ ticket.description }}</p>
-            <p><strong>Créé par:</strong> {{ ticket.user }}</p>
+            <p><strong>Créé par :</strong> {{ ticket.user.username }}</p>
 
             {% if ticket.user == request.user %}
                 <form action="{% url 'delete_ticket' ticket.id %}" method="POST" style="display:inline;">
-    {% csrf_token %}
-    <button type="submit" class = "btn btn-outline-danger btn-sm" style="
-        border: 1px solid #7c53a2;
-        background-color: #7c53a2;
-        color:white ;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-    ">Supprimer</button>
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm" style="
+                        border: 1px solid #7c53a2;
+                        background-color: #7c53a2;
+                        color: white;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        font-weight: bold;
+                        cursor: pointer;">Supprimer</button>
                 </form>
-            
-        
-  <a href="{% url 'edit_ticket' ticket.id %}" class = "btn btn-outline-danger btn-sm" style="
-        border: 1px solid #7c53a2;
-        background-color: #7c53a2;
-        color:white ;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-    ">Modifier</a>
-{% endif %}
+
+                <a href="{% url 'edit_ticket' ticket.id %}" class="btn btn-outline-danger btn-sm" style="
+                    border: 1px solid #7c53a2;
+                    background-color: #7c53a2;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    cursor: pointer;">Modifier</a>
+            {% endif %}
+            <!--  Nested review display for this ticket -->
+        {% for review in reviews %}
+            {% if review.ticket.id == ticket.id %}
+                <div class="mt-3 p-2 border-top">
+                    <strong>{{ review.user.username }} a publié une critique :</strong><br>
+                    <span><strong>{{ review.headline }}</strong> – 
+                        {% for i in "12345" %}
+                     {% if forloop.counter <= review.rating %}
+                       <span style="color: orange;"> ★ </span>
+                    {% else %}
+                       <span style="color: lightgray;"> ☆</span>
+                    {% endif %}
+                 {% endfor %}
+                    </span>
+                    <p>{{ review.body }}</p>
+                </div>
+            {% endif %}
+        {% endfor %}
+
         </div>
     {% empty %}
         <p class="text-center mt-3">Aucun ticket disponible.</p>
     {% endfor %}
 </div>
+
 {% endblock %}
