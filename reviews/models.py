@@ -4,10 +4,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 
 class Review(models.Model):
+    RATING_CHOICES = [(i, str(i)) for i in range(1,6)]
     ticket = models.ForeignKey('Ticket', on_delete=models.CASCADE) # à créer !
-    rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(5)]
-    )
+    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     headline = models.CharField(max_length=128)
     body = models.TextField(max_length=8192, blank=True)
