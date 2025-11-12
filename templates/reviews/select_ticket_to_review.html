@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Sélectionner un ticket{% endblock %}
+{% block header_title %}Demander une critique{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    {% if tickets %}
+        {% for ticket in tickets %}
+            <div class="border p-3 mb-4">
+                <h4>{{ ticket.title }}</h4>
+                <p>{{ ticket.description }}</p>
+
+                {% if ticket.image %}
+                    <img src="{{ ticket.image.url }}" alt="Image de couverture" width="200" class="mb-3">
+                {% endif %}
+
+                <small>Créé par : {{ ticket.user.username }}</small><br>
+                <a href="{% url 'create_review' ticket.id %}" class="btn btn-outline-primary mt-2">
+                    Créer une critique
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center mt-3">Aucun ticket à critiquer pour le moment.</p>
+    {% endif %}
+</div>
+{% endblock %}
