@@ -4,14 +4,18 @@ from django.views.decorators.http import require_POST
 from .forms import TicketForm,ReviewForm
 from .models import Ticket,Review
 from django.db.models import Q
+from itertools import chain
+from operator import attrgetter
 
 @login_required
+
 def feed_view(request):
     tickets=Ticket.objects.all().order_by('-time_created')
     reviews=Review.objects.all().order_by('-time_created')
     return render(request, 'reviews/feed.html',
                   {'tickets': tickets,
                     'reviews': reviews})
+   
 
 def create_ticket(request):
     if request.method == 'POST':
