@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from .forms import TicketForm,ReviewForm
-from .models import Ticket,Review
+from .forms import TicketForm,ReviewForm,FollowUserForm
+from .models import Ticket,Review,UserFollows
 from django.db.models import Q
-from itertools import chain
-from operator import attrgetter
+from django.contrib import messages
+from django.contrib.auth import get_user_model
 
 @login_required
 
@@ -112,3 +112,46 @@ def create_ticket_and_review(request):
         'review_form' : review_form
     })
 
+User = get_user_model()
+
+@login_required
+def follow_users_view(request):
+    form = FollowUserForm()
+    
+    followed_users = UserFollows.objects.filter(user=request.user)
+    followers = UserFollows.objects.filter(followed_user=request.user)  #  fixed field name
+
+    if request.method == 'POST':
+        form = FollowUserForm(request.POST)
+        if form.is_valid():
+            username_to_follow = form.cleaned_data['username']
+            try:
+                user_to_follow = User.objects.get(username=username_to_follow)  #  fixed "user" to "User"
+                if user_to_follow == request.user:
+                    messages.warning(request, " Vous ne pouvez pas vous suivre vous-même.")
+                elif UserFollows.objects.filter(user=request.user, followed_user=user_to_follow).exists():  # ✅ field fixed
+                    messages.info(request, f"Vous suivez déjà {username_to_follow}.")
+                else:
+                    UserFollows.objects.create(user=request.user, followed_user=user_to_follow)  #  fixed field name
+                    messages.success(request, f"Vous suivez maintenant {username_to_follow}.")
+                    return redirect('follow_users')
+            except User.DoesNotExist:
+                messages.error(request, f"Utilisateur '{username_to_follow}' introuvable.")
+
+    context = {
+        'form': form,
+        'followed_users': followed_users,
+        'followers': followers,
+    }
+    return render(request, 'reviews/follow_users.html', context)
+
+@login_required
+def unfollow_user_view(request, follow_id):
+    try:
+        relation = UserFollows.objects.get(id=follow_id, user=request.user)
+        username = relation.followed_user.username
+        relation.delete()
+        messages.success(request, f"Vous ne suivez plus {username}.")
+    except UserFollows.DoesNotExist:
+        messages.error(request, "Cette relation n'existe pas ou ne vous appartient pas.")
+    return redirect('follow_users')

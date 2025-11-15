@@ -41,7 +41,8 @@
     <div class="d-flex align-items-center" style="white-space: nowrap;">
         <a href="{% url 'feed' %}" class="text-white me-3 text-decoration-none">Flux</a>
         <a href="#" class="text-white me-3 text-decoration-none">Posts</a>
-        <a href="#" class="text-white me-3 text-decoration-none">Abonnements</a>
+        <a href= "{% url 'follow_users' %}" class="text-white me-3 text-decoration-none">Abonnements</a>
+        
         <form action="{% url 'logout' %}" method="POST" style="display: inline;">
            {% csrf_token %}
            <button type="submit" class="btn btn-link text-white p-0 m-0 align-baseline text-decoration-none">

@@ -12,10 +12,13 @@ class TicketForm(forms.ModelForm):
         }
 
 class FollowUserForm(forms.Form):
-    username = forms.CharField(label="Nom d'utilisateur", max_length=150)
+    username = forms.CharField(label="Nom d'utilisateur", max_length=150,
+                               widget=forms.TextInput(attrs={
+                                   'class':'form-control',
+                                   'placeholder': 'Nom Utilisateur',
+                                   'style': 'max-width: 300px;'
+                               }))
 
-from django import forms
-from .models import Review
 
 class ReviewForm(forms.ModelForm):
     class Meta:

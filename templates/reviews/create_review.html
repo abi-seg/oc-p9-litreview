@@ -11,9 +11,9 @@
         <img src="{{ ticket.image.url }}" alt="Image du ticket" width="200" class="mb-3">
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{review_form.as_p}}
         <button type="submit" class="btn btn-brown mt-3">Envoyer la critique</button>
     </form>
 </div>
