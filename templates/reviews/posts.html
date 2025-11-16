@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Vos posts{% endblock %}
+{% block content %}
+
+<h2 class="text-center my-4">Vos posts</h2><div class="container"> {% for item in items %} <div class="border p-4 mb-4"> {% if item.type == 'review' %} <p class="text-end text-muted">{{ item.content.time_created|date:"H:i, d F Y" }}</p> <h5>Vous avez publié une critique</h5> <h6> <strong>{{ item.content.headline }}</strong> – {% for i in "12345" %} {% if forloop.counter <= item.content.rating %} <span style="color: orange;">★</span> {% else %} <span style="color: lightgray;">☆</span> {% endif %} {% endfor %} </h6> <p>{{ item.content.body }}</p> <div class="border p-3 my-3"> <p class="text-muted">Ticket : {{ item.content.ticket.user.username }}</p> <h6>{{ item.content.ticket.title }}</h6> {% if item.content.ticket.image %} <img src="{{ item.content.ticket.image.url }}" alt="image" width="120" class="mb-2" /> {% endif %} <p>{{ item.content.ticket.description }}</p> </div> <div class="text-end"> <a href="{% url 'edit_review' item.content.id %}" class="btn btn-outline-primary btn-sm">Modifier</a> <a href="{% url 'delete_review' item.content.id %}" class="btn btn-outline-danger btn-sm">Supprimer</a> </div> text
+text
+
+    {% elif item.type == 'ticket' %}
+        <p class="text-end text-muted">{{ item.content.time_created|date:"H:i, d F Y" }}</p>
+        <h5>Vous avez publié un ticket</h5>
+        <h6>{{ item.content.title }}</h6>
+        {% if item.content.image %}
+            <img src="{{ item.content.image.url }}" alt="image" width="120" class="mb-2" />
+        {% endif %}
+        <p>{{ item.content.description }}</p>
+        <div class="text-end">
+            <a href="{% url 'edit_ticket' item.content.id %}" class="btn btn-outline-primary btn-sm">Modifier</a>
+            <form action="{% url 'delete_ticket' item.content.id %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" 
+                    class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm ('Êtes-vous sûr de vouloir supprimer ce ticket ?');">Supprimer
+                </button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% empty %}
+<p class="text-center text-muted">Aucun post à afficher.</p>
+{% endfor %}
+
+</div> {% endblock %}

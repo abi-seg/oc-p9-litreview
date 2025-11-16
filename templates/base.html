@@ -40,7 +40,7 @@
     <span class="text-center w-100"><strong>LITReview</strong></span>
     <div class="d-flex align-items-center" style="white-space: nowrap;">
         <a href="{% url 'feed' %}" class="text-white me-3 text-decoration-none">Flux</a>
-        <a href="#" class="text-white me-3 text-decoration-none">Posts</a>
+        <a href="{% url 'posts' %}" class="text-white me-3 text-decoration-none">Posts</a>
         <a href= "{% url 'follow_users' %}" class="text-white me-3 text-decoration-none">Abonnements</a>
         
         <form action="{% url 'logout' %}" method="POST" style="display: inline;">

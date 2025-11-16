@@ -6,15 +6,33 @@ from .models import Ticket,Review,UserFollows
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from itertools import chain
 
 @login_required
 
 def feed_view(request):
-    tickets=Ticket.objects.all().order_by('-time_created')
-    reviews=Review.objects.all().order_by('-time_created')
+# get the users that the current user is following
+    followed_users = UserFollows.objects.filter(user=request.user).values_list(
+        'followed_user',flat=True)
+#get tickets: created by myself and created by people i follow
+    tickets = Ticket.objects.filter(
+        Q(user=request.user) | Q(user__in=followed_users)
+    )
+# get reviews: written by myself, written about tickets created by people i follow
+    reviews=Review.objects.filter(
+        Q(user=request.user) | Q(ticket__user__in=followed_users)
+    )
+#Annotate each item with a type for template logic
+    combined = list(chain(
+        [{'type': 'ticket','content':ticket} for ticket in tickets],
+        [{'type': 'review','content':review} for review in reviews],
+    ))
+# sort by creation date (newest first)
+    items = sorted(combined, key=lambda x: x['content'].time_created,
+        reverse=True
+    )
     return render(request, 'reviews/feed.html',
-                  {'tickets': tickets,
-                    'reviews': reviews})
+                  {'items':items})
    
 
 def create_ticket(request):
@@ -61,6 +79,7 @@ def create_review(request, ticket_id):
 
     # Optional: check if user has already reviewed this ticket
     if Review.objects.filter(ticket=ticket, user=request.user).exists():
+        messages.warning(request, "Vous avez déjà rédigé une critique pour ce ticket.")
         # Handle this: redirect, error message, etc.
         return redirect('feed')
 
@@ -71,6 +90,7 @@ def create_review(request, ticket_id):
             review.user = request.user
             review.ticket = ticket
             review.save()
+            messages.success(request, "Votre critique a été publiée avec succès !")
             return redirect('feed')
     else:
         form = ReviewForm()
@@ -155,3 +175,20 @@ def unfollow_user_view(request, follow_id):
     except UserFollows.DoesNotExist:
         messages.error(request, "Cette relation n'existe pas ou ne vous appartient pas.")
     return redirect('follow_users')
+
+@login_required
+def posts_view(request):
+    tickets = Ticket.objects.filter(user=request.user)
+    reviews = Review.objects.filter(user=request.user)
+    from itertools import chain
+    items = sorted(
+        chain(
+            [{'type': 'ticket', 'content': t} for t in tickets],
+            [{'type': 'review', 'content': r} for r in reviews]
+        ),
+        key=lambda x:x['content'].time_created,
+        reverse=True
+    )
+    return render(request,'reviews/posts.html', {
+        'items':items
+    })
