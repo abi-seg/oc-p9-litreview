@@ -5,13 +5,13 @@ from django.contrib.auth.forms import AuthenticationForm
 
 def connexion_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data = request.POST)
+        form = ConnexionForm(request, data = request.POST)
         if form.is_valid():
             
             login(request,form.get_user())
             return redirect('feed')
     else:
-        form = AuthenticationForm()
+        form = ConnexionForm()
     return render(request, 'accounts/connexion.html', {'form': form})
 
 def inscription_view(request):
