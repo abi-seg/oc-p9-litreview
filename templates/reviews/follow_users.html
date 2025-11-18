@@ -22,7 +22,8 @@
                         <tr>
                             <td>{{ relation.followed_user.username }}</td>
                             <td class="text-end">
-                                <form method="POST" action="{% url 'unfollow_user' relation.id %}">
+                                <form method="POST" action="{% url 'unfollow_user' relation.id %}"
+                                    onsubmit="return confirm('Êtes-vous sur de vouloir vous Désabonner de {{relation.followed_user.username}} ?');">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-outline-dark btn-sm">Désabonner</button>
                                 </form>

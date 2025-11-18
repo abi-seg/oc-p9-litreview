@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Modifier votre propre critique{% endblock %}
+{% block header_title %}Modifier votre critique{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h3 class="mb-4 text-center">Vous êtes en train de modifier votre critique en réponse à :</h3>
+
+  <div class="border p-3 mb-5 shadow-sm rounded">
+    <p class="text-muted"><strong>{{ review.ticket.user.username }}</strong> a demandé une critique</p>
+    <p class="fst-italic">{{ review.ticket.time_created|date:"H:i, d F Y" }}</p>
+    <h5>{{ review.ticket.title }}</h5>
+    {% if review.ticket.image %}
+      <img src="{{ review.ticket.image.url }}" alt="Image du ticket" class="mb-3" style="max-width:150px;">
+    {% endif %}
+    <p>{{ review.ticket.description }}</p>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="mb-4">
+      <label for="id_headline" class="form-label">Titre de la critique</label>
+      {{ form.headline }}
+    </div>
+
+    <div class="mb-4">
+      <label for="id_rating" class="form-label d-block">Note</label>
+      {{ form.rating }}  {# Already styled with radio inputs from the form #}
+    </div>
+
+    <div class="mb-4">
+      <label for="id_body" class="form-label">Commentaire</label>
+      {{ form.body }}
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn" style="background-color:#7c53a2; color:white; padding:10px 20px; border-radius:5px;">
+        Envoyer
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

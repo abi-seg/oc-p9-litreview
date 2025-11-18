@@ -25,7 +25,10 @@ class ReviewForm(forms.ModelForm):
         model = Review
         fields = ['headline', 'rating', 'body']
         widgets = {
-            'headline': forms.TextInput(attrs={'class': 'form-control'}),
-            'rating': forms.RadioSelect(),
-            'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'rating':forms.RadioSelect
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['headline'].widget.attrs['class'] = 'form-input'
+        self.fields['body'].widget.attrs['class'] = 'form-input'
