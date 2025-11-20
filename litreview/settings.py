@@ -126,3 +126,11 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 # Redirect URLs after login/logout
 LOGIN_URL = '/accounts/connexion/'  # your actual login page
 LOGIN_REDIRECT_URL = '/flux/'       # where to go after successful login
+
+
+from pathlib import Path
+import os
+
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
