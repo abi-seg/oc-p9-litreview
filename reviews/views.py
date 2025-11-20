@@ -12,6 +12,18 @@ from django.http import HttpResponseForbidden
 @login_required
 
 def feed_view(request):
+    """
+    Affiche le flux (feed) personnalisé de l'utilisateur connecté.
+
+    Le flux contient :
+    - les tickets créés par l'utilisateur,
+    - les tickets créés par les utilisateurs qu’il suit,
+    - les critiques rédigées par l’utilisateur,
+    - les critiques rédigées sur les tickets des utilisateurs suivis.
+
+    Les tickets et reviews sont fusionnés, annotés par type, triés par date
+    de création (ordre décroissant), puis envoyés au template.
+    """
 # get the users that the current user is following
     followed_users = UserFollows.objects.filter(user=request.user).values_list(
         'followed_user',flat=True)
@@ -37,6 +49,17 @@ def feed_view(request):
    
 
 def create_ticket(request):
+    """
+    Crée un nouveau ticket.
+
+    Si la requête est POST et que le formulaire est valide :
+    - le ticket est enregistré,
+    - l’utilisateur connecté est assigné comme propriétaire,
+    - redirection vers la page de succès.
+
+    Sinon, un formulaire vide est affiché.
+
+    """
     if request.method == 'POST':
         form = TicketForm(request.POST,request.FILES)
         if form.is_valid():
@@ -49,9 +72,16 @@ def create_ticket(request):
     return render(request, 'reviews/create_ticket.html', {'form':form})
 
 def ticket_succes(request):
+    """Affiche une page confirmant la création réussie d’un ticket."""
     return render (request, 'reviews/ticket_succes.html')
 
 def edit_ticket(request, ticket_id):
+    """
+    Permet à l'utilisateur connecté de modifier un de ses tickets.
+
+    Si le ticket n'appartient pas à l'utilisateur, une erreur 404 est levée.
+
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
 
     if request.method == 'POST':
@@ -69,6 +99,13 @@ def edit_ticket(request, ticket_id):
 
 @require_POST
 def delete_ticket(request, ticket_id):
+
+    """
+    Supprime un ticket appartenant à l’utilisateur connecté.
+
+    La vue accepte uniquement les requêtes POST pour éviter les suppressions accidentelles.
+
+    """
     ticket=get_object_or_404(Ticket, id=ticket_id, user=request.user)
     ticket.delete()
     return redirect('feed')
@@ -76,6 +113,14 @@ def delete_ticket(request, ticket_id):
 
 @login_required
 def create_review(request, ticket_id):
+
+    """
+    Crée une critique pour un ticket donné.
+
+    Empêche l’utilisateur de critiquer deux fois un même ticket.
+    Associe automatiquement la critique au ticket et à l’utilisateur connecté.
+
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
     # Optional: check if user has already reviewed this ticket
@@ -103,12 +148,28 @@ def create_review(request, ticket_id):
 
 @login_required
 def select_ticket_to_review(request):
+
+    """
+    Affiche la liste des tickets que l'utilisateur peut critiquer.
+
+    Exclusions :
+    - ses propres tickets,
+    - les tickets déjà critiqués par l'utilisateur.
+
+    """
     user = request.user
     reviewed_ticket_ids = Review.objects.filter(user=user).values_list('ticket_id', flat=True)
     tickets = Ticket.objects.exclude(user=user).exclude(id__in=reviewed_ticket_ids)
     return render(request, 'reviews/select_ticket_to_review.html',{'tickets': tickets})
 
 def create_ticket_and_review(request):
+
+    """
+    Permet à l'utilisateur de créer un ticket et une critique simultanément.
+
+    Les deux formulaires doivent être valides pour que les objets soient créés.
+
+    """
     if request.method == 'POST':
         ticket_form = TicketForm(request.POST, request.FILES)
         review_form=ReviewForm(request.POST)
@@ -137,6 +198,19 @@ User = get_user_model()
 
 @login_required
 def follow_users_view(request):
+    """
+    Permet à l’utilisateur de rechercher et suivre d’autres utilisateurs.
+
+    Fonctionnalités :
+    - formulaire de recherche par nom d’utilisateur,
+    - ajout d’une relation de suivi,
+    - vérifications : utilisateur inexistant, auto-suivi, doublon.
+
+    Affiche également :
+    - la liste des utilisateurs suivis,
+    - la liste des utilisateurs qui suivent l'utilisateur.
+
+    """
     form = FollowUserForm()
     
     followed_users = UserFollows.objects.filter(user=request.user)
@@ -168,6 +242,13 @@ def follow_users_view(request):
 
 @login_required
 def unfollow_user_view(request, follow_id):
+    """
+    Permet à l’utilisateur de se désabonner d’un utilisateur suivi.
+
+    Si la relation n'existe pas ou n'appartient pas à l'utilisateur,
+    un message d’erreur est affiché.
+
+    """
     try:
         relation = UserFollows.objects.get(id=follow_id, user=request.user)
         username = relation.followed_user.username
@@ -179,6 +260,13 @@ def unfollow_user_view(request, follow_id):
 
 @login_required
 def posts_view(request):
+
+    """
+    Affiche les tickets et critiques créés par l’utilisateur connecté.
+
+    Les éléments sont combinés, typés et triés par date décroissante.
+
+    """
     tickets = Ticket.objects.filter(user=request.user)
     reviews = Review.objects.filter(user=request.user)
     from itertools import chain
@@ -195,6 +283,14 @@ def posts_view(request):
     })
 @login_required
 def edit_review(request,review_id):
+
+    """
+    Permet à un utilisateur de modifier l’une de ses critiques.
+
+    Si l’utilisateur n’est pas le propriétaire de la critique,
+    une erreur HTTP 403 est renvoyée.
+
+    """
     review = get_object_or_404(Review,id=review_id,user=request.user)
     if review.user != request.user:
         return HttpResponseForbidden("You cannot edit someone else's review.")
@@ -216,6 +312,12 @@ def edit_review(request,review_id):
 @login_required
 
 def delete_review(request, review_id):
+    """
+    Supprime une critique appartenant à l’utilisateur connecté.
+
+    La suppression n’est possible que via une requête POST.
+    
+    """
     review = get_object_or_404(Review, id = review_id, user = request.user)
     review.delete()
     return redirect('posts')
